@@ -83,17 +83,16 @@ export async function getAllRentals(req, res) {
 
 export async function addRental(req, res) {
     try {
-        const customers = await connection.query("SELECT * FROM rentals WHERE \"customerId\" = $1", [req.body.customerId]);
-        console.log("teste ", customers.rows);
+        const customers = await connection.query("SELECT * FROM customers WHERE id = $1", [req.body.customerId]);
         if(customers.rowCount === 0) return res.sendStatus(400);
-        const games = await connection.query("SELECT * FROM rentals WHERE \"gameId\" = $1", [req.body.gameId]);
+        const games = await connection.query("SELECT * FROM games WHERE id = $1", [req.body.gameId]);
         if(games.rowCount === 0) return res.sendStatus(400);
         let gamesRented = 0;
         games.rows.forEach(() => {
             gamesRented++;
         });
-        const game = await connection.query("SELECT * FROM games where id = $1", [req.body.gameId]);
-        if(game.rows[0].stockTotal < (gamesRented + 1)) return res.sendStatus(400);
+
+        if(games.rows[0].stockTotal < (gamesRented + 1)) return res.sendStatus(400);
 
         const rentDate = date;
         const originalPrice = game.rows[0].pricePerDay * req.body.daysRented;
