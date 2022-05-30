@@ -84,6 +84,7 @@ export async function getAllRentals(req, res) {
 export async function addRental(req, res) {
     try {
         const customers = await connection.query("SELECT * FROM rentals WHERE \"customerId\" = $1", [req.body.customerId]);
+        console.log("teste ", customers.rows);
         if(customers.rowCount === 0) return res.sendStatus(400);
         const games = await connection.query("SELECT * FROM rentals WHERE \"gameId\" = $1", [req.body.gameId]);
         if(games.rowCount === 0) return res.sendStatus(400);
