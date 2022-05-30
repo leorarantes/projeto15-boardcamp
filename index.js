@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 
 import categoriesRouter from "./routes/categoriesRouter.js";
 import gamesRouter from "./routes/gamesRouter.js";
+import customersRouter from "./routes/customersRouter.js";
 
 // config
 const app = express();
@@ -15,6 +16,7 @@ dotenv.config();
 // routes
 app.use(categoriesRouter);
 app.use(gamesRouter);
+app.use(customersRouter);
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(chalk.bold.green(`Server is running on port ${port}.`)));
