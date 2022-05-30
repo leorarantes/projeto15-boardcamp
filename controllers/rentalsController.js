@@ -85,17 +85,18 @@ export async function addRental(req, res) {
     try {
         const customers = await connection.query("SELECT * FROM customers WHERE id = $1", [req.body.customerId]);
         if(customers.rowCount === 0) return res.sendStatus(400);
-        const games = await connection.query("SELECT * FROM games WHERE id = $1", [req.body.gameId]);
-        if(games.rowCount === 0) return res.sendStatus(400);
+        const game = await connection.query("SELECT * FROM games WHERE id = $1", [req.body.gameId]);
+        if(game.rowCount === 0) return res.sendStatus(400);
+
         let gamesRented = 0;
+        const games = await connection.query("SELECT * FROM rentals WHERE \"gameId\" = $1", [req.body.gameId]);
         games.rows.forEach(() => {
             gamesRented++;
         });
-
-        if(games.rows[0].stockTotal < (gamesRented + 1)) return res.sendStatus(400);
+        if(game.rows[0].stockTotal < (gamesRented + 1)) return res.sendStatus(400);
 
         const rentDate = date;
-        const originalPrice = games.rows[0].pricePerDay * req.body.daysRented;
+        const originalPrice = game.rows[0].pricePerDay * req.body.daysRented;
 
         await connection.query("INSERT INTO rentals (\"customerId\", \"gameId\", \"rentDate\", \"daysRented\", \"returnDate\", \"originalPrice\", \"delayFee\") VALUES ($1, $2, $3, $4, null, $5, null)", [req.body.customerId, req.body.gameId, rentDate, req.body.daysRented, originalPrice]);
 
