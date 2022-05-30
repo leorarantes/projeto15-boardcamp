@@ -95,7 +95,7 @@ export async function addRental(req, res) {
         if(games.rows[0].stockTotal < (gamesRented + 1)) return res.sendStatus(400);
 
         const rentDate = date;
-        const originalPrice = game.rows[0].pricePerDay * req.body.daysRented;
+        const originalPrice = games.rows[0].pricePerDay * req.body.daysRented;
 
         await connection.query("INSERT INTO rentals (\"customerId\", \"gameId\", \"rentDate\", \"daysRented\", \"returnDate\", \"originalPrice\", \"delayFee\") VALUES ($1, $2, $3, $4, null, $5, null)", [req.body.customerId, req.body.gameId, rentDate, req.body.daysRented, originalPrice]);
 
